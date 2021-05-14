@@ -26,7 +26,7 @@
     </js-module>
 
     <platform name="android">
-        <dependency name="cordova-plugin-android-permissions"/>
+        <dependency id="cordova-plugin-android-permissions"/>
         <config-file target="res/xml/config.xml" parent="/*">
             <!-- Change this to your plugin name -->
             <feature name="Permissions">
