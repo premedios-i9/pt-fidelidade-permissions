@@ -1,0 +1,19 @@
+{
+  "name": "pt-fidelidade-permissions",
+  "version": "1.0.0",
+  "description": "**Name:** pt-fidelidade-permissions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/premedios-i9/pt-fidelidade-permissions.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/premedios-i9/pt-fidelidade-permissions/issues"
+  },
+  "homepage": "https://github.com/premedios-i9/pt-fidelidade-permissions#readme"
+}
