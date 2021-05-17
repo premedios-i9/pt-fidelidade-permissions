@@ -29,7 +29,7 @@
         <dependency id="cordova-plugin-android-permissions"/>
         <config-file target="res/xml/config.xml" parent="/*">
             <!-- Change this to your plugin name -->
-            <feature name="Permissions">
+            <feature name="PermissionsFIT">
                 <!-- Change this to reflect the name of the package in your android source files -->
                 <param name="android-package" value="pt.fidelidade.plugins.permissions"/>
             </feature>
