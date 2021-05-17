@@ -26,6 +26,7 @@
     </js-module>
 
     <platform name="android">
+        <preference name="android-minSdkVersion" value="23" />
         <dependency id="cordova-plugin-android-permissions"/>
         <config-file target="res/xml/config.xml" parent="/*">
             <!-- Change this to your plugin name -->
