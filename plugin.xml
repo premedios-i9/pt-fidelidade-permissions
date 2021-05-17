@@ -35,7 +35,7 @@
             </feature>
         </config-file>
 
-        <!-- <source-file src="src/android/ToastyPlugin.java" target-dir="src/com/stanleyidesis/cordova/plugin" /> -->
+        <source-file src="src/android/Permissions.java" target-dir="src/pt/fidelidade/plugins/permissions" />
     </platform>
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
