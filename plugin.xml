@@ -26,7 +26,6 @@
     </js-module>
 
     <platform name="android">
-        <preference name="android-minSdkVersion" value="23" />
         <dependency id="cordova-plugin-android-permissions"/>
         <config-file target="res/xml/config.xml" parent="/*">
             <!-- Change this to your plugin name -->
@@ -34,6 +33,7 @@
                 <!-- Change this to reflect the name of the package in your android source files -->
                 <param name="android-package" value="pt.fidelidade.plugins.permissions"/>
             </feature>
+            <uses-sdk android:minSdkVersion="23" />
         </config-file>
 
         <source-file src="src/android/Permissions.java" target-dir="src/pt/fidelidade/plugins/permissions" />
