@@ -22,7 +22,7 @@
     <!-- Change myplugin.js to the name of your plugin's main js file -->
     <js-module src="src/permissions.js" name="plugin">
         <!-- Change myPlugin to the name you want your plugin to be referenced from -->
-        <clobbers target="PermissionsOutsystems" />
+        <clobbers target="PermissionsOutSystems" />
     </js-module>
 
     <platform name="android">
