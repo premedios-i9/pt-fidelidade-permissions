@@ -34,7 +34,7 @@
                 <param name="android-package" value="pt.fidelidade.plugins.permissions"/>
             </feature>
         </config-file>
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+        <config-file target="AndroidManifest.xml" parent="/*">
             <uses-sdk android:minSdkVersion="23" />
         </config-file>
 
