@@ -28,6 +28,7 @@ public class Permissions extends CordovaPlugin {
                     PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
                     pluginResult.setKeepCallback(true);
                     checkBatteryOptimization(permissionsCallbackContext);
+                    return true;
                 }
             });
         }
