@@ -31,7 +31,7 @@
             <!-- Change this to your plugin name -->
             <feature name="PermissionsFIT">
                 <!-- Change this to reflect the name of the package in your android source files -->
-                <param name="android-package" value="pt.fidelidade.plugins.permissions"/>
+                <param name="android-package" value="pt.fidelidade.plugins.permissions.Permissions"/>
             </feature>
         </config-file>
         <config-file target="AndroidManifest.xml" parent="/*">
@@ -42,7 +42,7 @@
     </platform>
     <platform name="ios">
         <config-file target="config.xml" parent="/*">
-            <feature name="Permissions">
+            <feature name="PermissionsFIT">
                 <param name="ios-package" value="Permissions" />
             </feature>
         </config-file>
