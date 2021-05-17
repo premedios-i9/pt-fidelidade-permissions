@@ -22,3 +22,5 @@ PermissionsOutSystems.prototype.checkPermission = function (successCallBack, fai
 PermissionsOutSystems.prototype.checkBatteryOptimization = function (successCallBack, failureCallBack) {
     exec(successCallBack, failureCallBack, "Permissions", "checkBatteryOptimization");
 };
+
+module.exports = new PermissionsOutSystems();
