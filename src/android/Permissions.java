@@ -6,6 +6,7 @@ import android.os.PowerManager;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -24,6 +25,8 @@ public class Permissions extends CordovaPlugin {
             cordova.getThreadPool().execute(new Runnable() {
                 @Override
                 public void run() {
+                    PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
+                    pluginResult.setKeepCallback(true);
                     checkBatteryOptimization(permissionsCallbackContext);
                 }
             });
@@ -37,5 +40,7 @@ public class Permissions extends CordovaPlugin {
         Boolean ignoringBatteryOptimizations = powerManager
                 .isIgnoringBatteryOptimizations(cordova.getContext().getPackageName());
 
+        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, ignoringBatteryOptimizations);
+        callbackContext.sendPluginResult(pluginResult);
     }
 }
