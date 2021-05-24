@@ -1,6 +1,8 @@
 package pt.fidelidade.plugins.permissions;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.PowerManager;
 
@@ -11,6 +13,7 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Permissions extends CordovaPlugin {
     private static String TAG = "Permissions-FIT";
@@ -57,6 +60,7 @@ public class Permissions extends CordovaPlugin {
         } else if (ACTION_CHECK_NOTIFICATIONS.equals(action)) {
             Boolean notificationsEnabled = NotificationManagerCompat.from(cordova.getContext())
                     .areNotificationsEnabled();
+            permissionsCallbackContext.success(notificationsEnabled ? "true" : "false");
         }
 
         return false;

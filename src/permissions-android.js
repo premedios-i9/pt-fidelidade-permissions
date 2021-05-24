@@ -177,9 +177,9 @@ var PermissionsOutSystems = function Permissions() {
 //     cordova.plugins.permissions.checkPermission(permission, successCallBack, failureCallBack);
 // };
 
-PermissionsOutSystems.prototype.requestPermission = function (successCallBack, failureCallBack, permission) {
-    cordova.plugins.permissions.requestPermission(permission, successCallBack, failureCallBack);
-};
+// PermissionsOutSystems.prototype.requestPermission = function (successCallBack, failureCallBack, permission) {
+//     cordova.plugins.permissions.requestPermission(permission, successCallBack, failureCallBack);
+// };
 
 PermissionsOutSystems.prototype.checkBatteryOptimization = function (successCallBack, failureCallBack) {
     exec(successCallBack, failureCallBack, "PermissionsFIT", "checkBatteryOptimization");
@@ -192,12 +192,26 @@ PermissionsOutSystems.prototype.checkGPSDeviceIsOn = function (successCallback, 
 // Will return a JSON with the key "hasPermission" and a string value of "true" or "false" on success
 PermissionsOutSystems.prototype.checkGPSPermission = function (successCallBack, failureCallBack, type) {
     if (type == this.GENERALLOCATION) {
-        cordova.plugins.permission.checkPermissions(this.ACCESS_FINE_LOCATION, successCallBack, failureCallBack);
+        cordova.plugins.permissions.checkPermission(this.ACCESS_FINE_LOCATION, successCallBack, failureCallBack);
     } else if (type == this.BACKGROUNDLOCATION) {
-        cordova.plugins.checkPermissions(this.ACCESS_BACKGROUND_LOCATION, successCallBack, failureCallBack);
+        cordova.plugins.permissions.checkPermission(this.ACCESS_BACKGROUND_LOCATION, successCallBack, failureCallBack);
     } else {
-        failureCallBack("Unknown location permission type");
+        failureCallBack("Unknown GPS permission type");
     }
+};
+
+PermissionsOutSystems.prototype.requestGPSPermission = function (successCallBack, failureCallBack, type) {
+    if (type == this.GENERALLOCATION) {
+        cordova.plugins.permissions.requestPermission(this.ACCESS_FINE_LOCATION, successCallBack, failureCallBack);
+    } else if (type == this.BACKGROUNDLOCATION) {
+        cordova.plugins.permission.requestPermission(this.ACCESS_BACKGROUND_LOCATION, successCallBack, failureCallBack);
+    } else {
+        failureCallBack("Unknown GPS permission type");
+    }
+};
+
+PermissionsOutSystems.prototype.requestGPSPermission2 = function (successCallBack, faliureCallBack, type) {
+    exec(successCallBack, failureCallBack, "PermissionsFIT", "requestGPSPermission2");
 };
 
 // Will return a JSON with the key "hasPermission" and a string value of "true" or "false" on success
@@ -205,8 +219,16 @@ PermissionsOutSystems.prototype.checkFitnessPermission = function (successCallBa
     cordova.plugins.permissions.checkPermissions(this.BODY_SENSORS, successCallBack, failureCallBack);
 };
 
-PermissionsOutSystems.prototype.checkNotificationsPermission = function (successCallBack, filaureCallBack) {
+PermissionsOutSystems.prototype.requestFitnessPermission = function (successCallBack, failureCallBack) {
+    cordova.plugins.permission.requestPermission(this.BODY_SENSORS, successCallBack, failureCallBack);
+};
+
+PermissionsOutSystems.prototype.checkNotificationsPermission = function (successCallBack, failureCallBack) {
     exec(successCallBack, failureCallBack, "PermissionsFIT", "checkNotificationsPermission");
+};
+
+PermissionsOutSystems.prototype.requestNotificationsPermission = function (successCallBack, failureCallBack) {
+    successCallBack("true");
 };
 
 module.exports = new PermissionsOutSystems();

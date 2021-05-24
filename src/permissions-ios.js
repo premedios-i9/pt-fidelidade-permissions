@@ -177,9 +177,9 @@ var PermissionsOutSystems = function Permissions() {
 //     cordova.plugins.permissions.checkPermission(permission, successCallBack, failureCallBack);
 // };
 
-PermissionsOutSystems.prototype.requestPermission = function (successCallBack, failureCallBack, permission) {
-    cordova.plugins.permissions.requestPermission(permission, successCallBack, failureCallBack);
-};
+// PermissionsOutSystems.prototype.requestPermission = function (successCallBack, failureCallBack, permission) {
+//     cordova.plugins.permissions.requestPermission(permission, successCallBack, failureCallBack);
+// };
 
 PermissionsOutSystems.prototype.checkBatteryOptimization = function (successCallBack, failureCallBack) {
     successCallBack("true");
@@ -193,12 +193,24 @@ PermissionsOutSystems.prototype.checkGPSPermission = function (successCallBack, 
     exec(successCallBack, failureCallBack, "PermissionsFIT", "checkGPSPermission", [type]);
 };
 
+PermissionsOutSystems.prototype.requestGPSPermission = function (successCallBack, failureCallBack, type) {
+    exec(successCallBack, failureCallBack, "PermissionsFIT", "requestGPSPermission", [type]);
+};
+
 PermissionsOutSystems.prototype.checkFitnessPermission = function (successCallBack, failureCallBack) {
     exec(successCallBack, failureCallBack, "PermissionsFIT", "checkFitnessPermission");
 };
 
-PermissionsOutSystems.prototype.checkNotificationsPermission = function (successCallBack, filaureCallBack) {
+PermissionsOutSystems.prototype.requestFitnessPermission = function (successCallBack, failureCallBack) {
+    successCallBack({ hasPermission: true });
+};
+
+PermissionsOutSystems.prototype.checkNotificationsPermission = function (successCallBack, failureCallBack) {
     exec(successCallBack, failureCallBack, "PermissionsFIT", "checkNotificationsPermission");
+};
+
+PermissionsOutSystems.prototype.requestNotificationsPermission = function (successCallBack, failureCallBack) {
+    exec(successCallBack, failureCallBack, "PermissionsFIT", "requestNotificationsPermission");
 };
 
 module.exports = new PermissionsOutSystems();

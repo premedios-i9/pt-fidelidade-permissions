@@ -1,58 +1,63 @@
 #import "Permissions.h"
 
-typedef enum : NSUInteger {
-    GENERAL,
-    BACKGROUND,
-} GpsPermissionType;
-
 @interface Permissions ()
 {
     NSString __block *callbackId;
     CDVPluginResult __block *pluginResult;
-    GpsPermissionType gpsPermissionType;
+    int gpsPermissionType;
 }
+
+@property (nonatomic, strong) CLLocationManager *locationManager;
+
 @end
 
 @implementation Permissions
 
 - (void)checkGPSPermission: (CDVInvokedUrlCommand *)command {
     callbackId = command.callbackId;
-    gpsPermissionType = (GpsPermissionType)command.arguments[1];
+    gpsPermissionType = [command.arguments[0] intValue];
     
     CLLocationManager *locationManager = [CLLocationManager new];
     locationManager.delegate = self;
     
     switch (gpsPermissionType) {
-        case GENERAL:
-            if ([locationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
-                pluginResult = [CDVPluginResult new];
-                pluginResult.keepCallback = @YES;
-                [locationManager requestWhenInUseAuthorization];
-            } else {
-                if (locationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse) {
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"true"];
-                    [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
-                }  else {
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"false"];
-                    [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
-                }
+        case 0:
+            if (locationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse) {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"true"];
+                [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
+            }  else {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"false"];
+                [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
             }
             break;
             
-        case BACKGROUND:
-            if ([locationManager authorizationStatus] == kCLAuthorizationStatusNotDetermined) {
-                pluginResult = [CDVPluginResult new];
-                pluginResult.keepCallback = @YES;
-                [locationManager requestAlwaysAuthorization];
-            } else {
-                if (locationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways) {
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"true"];
-                    [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
-                }  else {
-                    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"false"];
-                    [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
-                }
+        case 1:
+            if (locationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways) {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"true"];
+                [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
+            }  else {
+                pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"false"];
+                [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
             }
+            break;
+    }
+}
+
+- (void)requestGPSPermission:(CDVInvokedUrlCommand *)command {
+    callbackId = command.callbackId;
+    
+    gpsPermissionType = [command.arguments[0] intValue];
+    
+    self.locationManager = [CLLocationManager new];
+    self.locationManager.delegate = self;
+    
+    switch (gpsPermissionType) {
+        case 0:
+            [self.locationManager requestWhenInUseAuthorization];
+            break;
+            
+        case 1:
+            [self.locationManager requestAlwaysAuthorization];
             break;
     }
 }
@@ -73,22 +78,24 @@ typedef enum : NSUInteger {
     callbackId = command.callbackId;
     
     [UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
-        if (settings.authorizationStatus != UNAuthorizationStatusNotDetermined) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                BOOL authorized = settings.authorizationStatus == UNAuthorizationStatusAuthorized;
-                self->pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:authorized ? @"true" : @"false"];
-                self->pluginResult.keepCallback = @YES;
-                [self.commandDelegate sendPluginResult:self->pluginResult callbackId:self->callbackId];
-            });
-        } else {
-            [UNUserNotificationCenter.currentNotificationCenter requestAuthorizationWithOptions:UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    self->pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:granted ? @"true" : @"false"];
-                    self->pluginResult.keepCallback = @YES;
-                    [self.commandDelegate sendPluginResult:self->pluginResult callbackId:self->callbackId];
-                });
-            }];
-        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            BOOL authorized = settings.authorizationStatus == UNAuthorizationStatusAuthorized;
+            self->pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:authorized ? @"true" : @"false"];
+            self->pluginResult.keepCallback = @YES;
+            [self.commandDelegate sendPluginResult:self->pluginResult callbackId:self->callbackId];
+        });
+    }];
+}
+
+- (void)requestNotificationsPermission:(CDVInvokedUrlCommand *)command {
+    callbackId = command.callbackId;
+    
+    [UNUserNotificationCenter.currentNotificationCenter requestAuthorizationWithOptions:UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound completionHandler:^(BOOL granted, NSError * _Nullable error) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self->pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:granted ? @"true" : @"false"];
+            self->pluginResult.keepCallback = @YES;
+            [self.commandDelegate sendPluginResult:self->pluginResult callbackId:self->callbackId];
+        });
     }];
 }
 
@@ -96,26 +103,36 @@ typedef enum : NSUInteger {
 
 - (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager {
     switch (gpsPermissionType) {
-        case GENERAL:
+        case 0:
             if (manager.authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse) {
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"true"];
+                pluginResult.keepCallback = @YES;
                 [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
-            } else {
+            } else if (manager.authorizationStatus == kCLAuthorizationStatusDenied){
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"false"];
+                pluginResult.keepCallback = @YES;
                 [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
             }
             break;
             
-        case BACKGROUND:
+        case 1:
             if (manager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways) {
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"true"];
+                pluginResult.keepCallback = @YES;
                 [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
-            } else {
+            } else if (manager.authorizationStatus == kCLAuthorizationStatusDenied){
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"false"];
+                pluginResult.keepCallback = @YES;
                 [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
             }
             break;
     }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    NSLog(@"Error: @%@", error);
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error.localizedDescription];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:callbackId];
 }
 
 @end
