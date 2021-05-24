@@ -1,8 +1,10 @@
 package pt.fidelidade.plugins.permissions;
 
 import android.content.Context;
-import android.os.BatteryManager;
+import android.location.LocationManager;
 import android.os.PowerManager;
+
+import androidx.core.app.NotificationManagerCompat;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -14,6 +16,8 @@ public class Permissions extends CordovaPlugin {
     private static String TAG = "Permissions-FIT";
 
     private static final String ACTION_CHECK_BATTERY_OPTIMIZATION = "checkBatteryOptimization";
+    private static final String ACTION_CHECK_GPS_DEVICE_IS_ON = "checkGPSDeviceIsOn";
+    private static final String ACTION_CHECK_NOTIFICATIONS = "checkNotificationsPermission";
 
     private CallbackContext permissionsCallbackContext;
 
@@ -28,10 +32,33 @@ public class Permissions extends CordovaPlugin {
                     PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
                     pluginResult.setKeepCallback(true);
                     checkBatteryOptimization(permissionsCallbackContext);
-                    return true;
                 }
             });
+            return true;
+        } else if (ACTION_CHECK_GPS_DEVICE_IS_ON.equals(action)) {
+            cordova.getThreadPool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK);
+                    pluginResult.setKeepCallback(true);
+
+                    LocationManager locationManager = (LocationManager) cordova.getContext()
+                            .getSystemService(Context.LOCATION_SERVICE);
+                    if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                        pluginResult = new PluginResult(PluginResult.Status.OK, "true");
+                    } else {
+                        pluginResult = new PluginResult(PluginResult.Status.OK, "false");
+                    }
+
+                    pluginResult.setKeepCallback(true);
+                    permissionsCallbackContext.sendPluginResult(pluginResult);
+                }
+            });
+        } else if (ACTION_CHECK_NOTIFICATIONS.equals(action)) {
+            Boolean notificationsEnabled = NotificationManagerCompat.from(cordova.getContext())
+                    .areNotificationsEnabled();
         }
+
         return false;
     }
 
@@ -42,6 +69,8 @@ public class Permissions extends CordovaPlugin {
                 .isIgnoringBatteryOptimizations(cordova.getContext().getPackageName());
 
         PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, ignoringBatteryOptimizations);
+        pluginResult.setKeepCallback(true);
         callbackContext.sendPluginResult(pluginResult);
     }
+
 }

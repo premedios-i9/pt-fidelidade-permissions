@@ -18,14 +18,14 @@
         <engine name="cordova-android" version=">=9.0.0"/>
         <engine name="cordova-ios" version=">=6.1.0"/>
     </engines>
-  
-    <!-- Change myplugin.js to the name of your plugin's main js file -->
-    <js-module src="src/permissions.js" name="plugin">
-        <!-- Change myPlugin to the name you want your plugin to be referenced from -->
-        <clobbers target="PermissionsOutSystems" />
-    </js-module>
 
     <platform name="android">
+        <!-- Change myplugin.js to the name of your plugin's main js file -->
+        <js-module src="src/permissions-android.js" name="plugin">
+            <!-- Change myPlugin to the name you want your plugin to be referenced from -->
+            <clobbers target="PermissionsOutSystems" />
+        </js-module>
+
         <dependency id="cordova-plugin-android-permissions"/>
         <config-file target="res/xml/config.xml" parent="/*">
             <!-- Change this to your plugin name -->
@@ -39,12 +39,22 @@
         </config-file>
 
         <source-file src="src/android/Permissions.java" target-dir="src/pt/fidelidade/plugins/permissions" />
+        <framework src="src/android/PermissionsBuild.gradle" custom="true" type="gradleReference" />
     </platform>
     <platform name="ios">
+        <!-- Change myplugin.js to the name of your plugin's main js file -->
+        <js-module src="src/permissions-ios.js" name="plugin">
+            <!-- Change myPlugin to the name you want your plugin to be referenced from -->
+            <clobbers target="PermissionsOutSystems" />
+        </js-module>
+
         <config-file target="config.xml" parent="/*">
             <feature name="PermissionsFIT">
                 <param name="ios-package" value="Permissions" />
             </feature>
         </config-file>
+
+        <header-file src="src/ios/Permissions.h" />
+        <source-file src="src/ios/Permissions.m" />
     </platform>
 </plugin>
