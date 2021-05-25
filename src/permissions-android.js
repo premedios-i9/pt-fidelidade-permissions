@@ -204,7 +204,11 @@ PermissionsOutSystems.prototype.requestGPSPermission = function (successCallBack
     if (type == this.GENERALLOCATION) {
         cordova.plugins.permissions.requestPermission(this.ACCESS_FINE_LOCATION, successCallBack, failureCallBack);
     } else if (type == this.BACKGROUNDLOCATION) {
-        cordova.plugins.permission.requestPermission(this.ACCESS_BACKGROUND_LOCATION, successCallBack, failureCallBack);
+        cordova.plugins.permissions.requestPermission(
+            this.ACCESS_BACKGROUND_LOCATION,
+            successCallBack,
+            failureCallBack
+        );
     } else {
         failureCallBack("Unknown GPS permission type");
     }
@@ -216,11 +220,11 @@ PermissionsOutSystems.prototype.requestGPSPermission2 = function (successCallBac
 
 // Will return a JSON with the key "hasPermission" and a string value of "true" or "false" on success
 PermissionsOutSystems.prototype.checkFitnessPermission = function (successCallBack, failureCallBack) {
-    cordova.plugins.permissions.checkPermissions(this.BODY_SENSORS, successCallBack, failureCallBack);
+    cordova.plugins.permissions.checkPermission(this.BODY_SENSORS, successCallBack, failureCallBack);
 };
 
 PermissionsOutSystems.prototype.requestFitnessPermission = function (successCallBack, failureCallBack) {
-    cordova.plugins.permission.requestPermission(this.BODY_SENSORS, successCallBack, failureCallBack);
+    cordova.plugins.permissions.requestPermission(this.BODY_SENSORS, successCallBack, failureCallBack);
 };
 
 PermissionsOutSystems.prototype.checkNotificationsPermission = function (successCallBack, failureCallBack) {
