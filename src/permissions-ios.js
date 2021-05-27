@@ -171,6 +171,13 @@ var PermissionsOutSystems = function Permissions() {
 
     this.GENERALLOCATION = 0;
     this.BACKGROUNDLOCATION = 1;
+
+    this.BATTERY_OPTIMIZATION_STRING = "BatteryOptimization";
+    this.GPS_DEVICE_IS_ON = "GPSDeviceIsOn";
+    this.FITNESS_PERMISSION = "FitnessPermission";
+    this.NOTIFICATION_PERMISSION = "NotificationsPermission";
+    this.FOREGROUND_PERMISSION = "ForegroundGPSPermission";
+    this.BACKGROUND_PERMISSION = "BackgroundGPSPermission";
 };
 
 // PermissionsOutSystems.prototype.checkPermission = function (successCallBack, failureCallBack, permission) {
@@ -180,6 +187,129 @@ var PermissionsOutSystems = function Permissions() {
 // PermissionsOutSystems.prototype.requestPermission = function (successCallBack, failureCallBack, permission) {
 //     cordova.plugins.permissions.requestPermission(permission, successCallBack, failureCallBack);
 // };
+    
+PermissionsOutSystems.prototype.checkPermissions = function (successCallBack, failureCallBack, permissions) {
+    var notAuthorized = new Array();
+//    var currentPermission = "";
+    var currentIndex = 0;
+    
+    function permissionSuccess(res, item) {
+        if ((res.hasOwnProperty("hasPermission") && res.hasPermission != true) || res == "false") {
+            notAuthorized.push(item);
+        }
+        
+        currentIndex += 1;
+        console.log("Check currentIndex: " + currentIndex, " length: " + (permissions.length));
+        if (currentIndex == permissions.length) {
+            successCallBack(notAuthorized);
+        }
+    }
+
+    function permissionFailure(res) {
+//        notAuthorized.push(currentPermission);
+        
+        currentIndex += 1;
+        console.log("Check currentIndex: " + currentIndex, " length: " + (permissions.length));
+        if (currentIndex == permissions.length) {
+            successCallBack(notAuthorized);
+        }
+    }
+
+    permissions.forEach(function (item, index) {
+//        currentPermission = item;
+        switch (item) {
+            case this.PermissionsOutSystems.BATTERY_OPTIMIZATION_STRING:
+                // exec(permissionSuccess, permissionFailure, "PermissionsFIT", "checkBatteryOptimization");
+                permissionSuccess(true);
+                break;
+
+            case this.PermissionsOutSystems.GPS_DEVICE_IS_ON:
+                // exec(permissionSuccess, permissionFailure, "PermissionsFIT", "checkGPSDeviceIsOn");
+                permissionSuccess(true);
+                break;
+
+            case this.PermissionsOutSystems.FITNESS_PERMISSION:
+                exec(function (res) {permissionSuccess(res, this.PermissionsOutSystems.FITNESS_PERMISSION) }, permissionFailure, "PermissionsFIT", "checkFitnessPermission");
+                break;
+
+            case this.PermissionsOutSystems.FOREGROUND_PERMISSION:
+                exec(function (res) {permissionSuccess(res, this.PermissionsOutSystems.FOREGROUND_PERMISSION) } , permissionFailure, "PermissionsFIT", "checkGPSPermission", [this.PermissionsOutSystems.GENERALLOCATION]);
+                break;
+
+            case this.PermissionsOutSystems.BACKGROUND_PERMISSION:
+                exec(function (res) {permissionSuccess(res, this.PermissionsOutSystems.BACKGROUND_PERMISSION) }, permissionFailure, "PermissionsFIT", "checkGPSPermission", [this.PermissionsOutSystems.BACKGROUNDLOCATION]);
+                break;
+
+            case this.PermissionsOutSystems.NOTIFICATION_PERMISSION:
+                exec(function (res) {permissionSuccess(res, this.PermissionsOutSystems.NOTIFICATION_PERMISSION) }, permissionFailure, "PermissionsFIT", "checkNotificationsPermission");
+                break;
+
+            default:
+                failureCallBack("Found unknown permission '" + item + "'");
+        }
+    });
+};
+
+PermissionsOutSystems.prototype.requestPermissions = function (successCallBack, failureCallBack, permissions) {
+    var notAuthorized = new Array();
+    var currentPermission = "";
+    var currentIndex = 0;
+
+    function permissionSuccess(res) {
+        if ((res.hasOwnProperty("hasPermission") && res.hasPermission != true) || res == "false") {
+            notAuthorized.push(currentPermission);
+        }
+        
+        currentIndex += 1;
+        console.log("currentIndex: " + currentIndex, " length: " + (permissions.length));
+        if (currentIndex == permissions.length) {
+            successCallBack(notAuthorized);
+        }
+    }
+
+    function permissionFailure(res) {
+//        notAuthorized.push(currentPermission);
+        
+        currentIndex += 1;
+        console.log("currentIndex: " + currentIndex, " length: " + (permissions.length));
+        if (currentIndex == permissions.length) {
+            successCallBack(notAuthorized);
+        }
+    }
+
+    permissions.forEach(function (item, index) {
+        currentPermission = item;
+
+        switch (item) {
+            case this.PermissionsOutSystems.BATTERY_OPTIMIZATION_STRING:
+                permissionSuccess("true");
+                break;
+
+            case this.PermissionsOutSystems.GPS_DEVICE_IS_ON:
+                permissionSuccess("true");
+                break;
+
+            case this.PermissionsOutSystems.FITNESS_PERMISSION:
+                permissionSuccess("true");
+                break;
+
+            case this.PermissionsOutSystems.FOREGROUND_PERMISSION:
+                exec(permissionSuccess, permissionFailure, "PermissionsFIT", "requestGPSPermission", [this.PermissionsOutSystems.GENERALLOCATION]);
+                break;
+
+            case this.PermissionsOutSystems.BACKGROUND_PERMISSION:
+                exec(permissionSuccess, permissionFailure, "PermissionsFIT", "requestGPSPermission", [this.PermissionsOutSystems.BACKGROUNDLOCATION]);
+                break;
+
+            case this.PermissionsOutSystems.NOTIFICATION_PERMISSION:
+                permissionSuccess("true");
+                break;
+
+            default:
+                failureCallBack("Found unknown permission '" + item + "'");
+        }
+    });
+};
 
 PermissionsOutSystems.prototype.checkBatteryOptimization = function (successCallBack, failureCallBack) {
     successCallBack("true");

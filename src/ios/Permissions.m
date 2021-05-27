@@ -3,6 +3,7 @@
 @interface Permissions ()
 {
     NSString __block *callbackId;
+    NSString __block *callbackIdNotifications;
     CDVPluginResult __block *pluginResult;
     int gpsPermissionType;
 }
@@ -22,7 +23,8 @@
     
     switch (gpsPermissionType) {
         case 0:
-            if (locationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse) {
+            if ( locationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedWhenInUse ||
+                locationManager.authorizationStatus == kCLAuthorizationStatusAuthorizedAlways) {
                 pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"true"];
                 [self.commandDelegate sendPluginResult: pluginResult callbackId:callbackId];
             }  else {
@@ -75,14 +77,17 @@
 }
 
 - (void)checkNotificationsPermission:(CDVInvokedUrlCommand *)command {
-    callbackId = command.callbackId;
+    callbackIdNotifications = command.callbackId;
+//    self->pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"true"];
+//    self->pluginResult.keepCallback = @YES;
+//    [self.commandDelegate sendPluginResult:self->pluginResult callbackId:self->callbackId];
     
     [UNUserNotificationCenter.currentNotificationCenter getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+        BOOL authorized = settings.authorizationStatus == UNAuthorizationStatusAuthorized;
         dispatch_async(dispatch_get_main_queue(), ^{
-            BOOL authorized = settings.authorizationStatus == UNAuthorizationStatusAuthorized;
             self->pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:authorized ? @"true" : @"false"];
-            self->pluginResult.keepCallback = @YES;
-            [self.commandDelegate sendPluginResult:self->pluginResult callbackId:self->callbackId];
+                self->pluginResult.keepCallback = @YES;
+            [self.commandDelegate sendPluginResult:self->pluginResult callbackId:self->callbackIdNotifications];
         });
     }];
 }
