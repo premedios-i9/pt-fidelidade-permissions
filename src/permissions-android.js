@@ -172,7 +172,8 @@ var PermissionsOutSystems = function Permissions() {
     this.GENERALLOCATION = 0;
     this.BACKGROUNDLOCATION = 1;
 
-    this.batteryOptimizationPermission = "BatteryOptimization";
+    this.BATTERYOPTIMIZATIONPERMISSION = "BatteryOptimization";
+    this.BatteryOptimizationPermission = "BatteryOptimization";
     this.gpsDeviceIsOn = "GPSDeviceIsOn";
     this.fitnessPermission = "FitnessPermission";
     this.notificationsPermission = "NotificationsPermission";
@@ -182,61 +183,86 @@ var PermissionsOutSystems = function Permissions() {
 
 PermissionsOutSystems.prototype.checkPermissions = function (successCallBack, failureCallBack, permissions) {
     var notAuthorized = new Array();
-    var currentPermission = "";
     var currentIndex = 0;
 
-    function permissionSuccess(res) {
+    function permissionSuccess(res, item) {
         if ((res.hasOwnProperty("hasPermission") && res.hasPermission != true) || res == "false") {
-            notAuthorized.push(currentPermission);
+            notAuthorized.push(item);
         }
 
-        if (currentIndex == permissions.length - 1) {
+        currentIndex += 1;
+        if (currentIndex == permissions.length) {
             successCallBack(notAuthorized);
         }
     }
 
     function permissionFailure(res) {
-        notAuthorized.push(currentPermission);
-
-        if (currentIndex == permissions.length - 1) {
-            successCallBack(notAuthorized);
-        }
+        console.log(res);
     }
 
     permissions.forEach(function (item, index) {
-        currentPermission = item;
-
         switch (item) {
-            case batteryOptimizationPermission:
-                exec(permissionSuccess, permissionFailure, "PermissionsFIT", "checkBatteryOptimization");
+            case this.PermissionsOutSystems.batteryOptimizationPermission:
+                exec(
+                    function (res) {
+                        permissionSuccess(res, item);
+                    },
+                    permissionFailure,
+                    "PermissionsFIT",
+                    "checkBatteryOptimization"
+                );
                 break;
 
-            case gpsDeviceIsOn:
-                exec(permissionSuccess, permissionFailure, "PermissionsFIT", "checkGPSDeviceIsOn");
+            case this.PermissionsOutSystems.gpsDeviceIsOn:
+                exec(
+                    function (res) {
+                        permissionSuccess(res, item);
+                    },
+                    permissionFailure,
+                    "PermissionsFIT",
+                    "checkGPSDeviceIsOn"
+                );
                 break;
 
-            case fitnessPermission:
-                cordova.plugins.permissions.checkPermission(this.BODY_SENSORS, permissionSuccess, permissionFailure);
+            case this.PermissionsOutSystems.fitnessPermission:
+                cordova.plugins.permissions.checkPermission(
+                    this.BODY_SENSORS,
+                    function (res) {
+                        permissionSuccess(res, item);
+                    },
+                    permissionFailure
+                );
                 break;
 
-            case foregroundGPSPermission:
+            case this.PermissionsOutSystems.foregroundGPSPermission:
                 cordova.plugins.permissions.checkPermission(
                     this.ACCESS_FINE_LOCATION,
-                    permissionSuccess,
+                    function (res) {
+                        permissionSuccess(res, item);
+                    },
                     permissionFailure
                 );
                 break;
 
-            case backgroundGPSPermission:
+            case this.PermissionsOutSystems.backgroundGPSPermission:
                 cordova.plugins.permissions.checkPermission(
                     this.ACCESS_BACKGROUND_LOCATION,
-                    permissionSuccess,
+                    function (res) {
+                        permissionSuccess(res, item);
+                    },
                     permissionFailure
                 );
                 break;
 
-            case notificationsPermission:
-                exec(permissionSuccess, permissionFailure, "PermissionsFIT", "checkNotificationsPermission");
+            case this.PermissionsOutSystems.notificationsPermission:
+                exec(
+                    function (res) {
+                        permissionSuccess(res, item);
+                    },
+                    permissionFailure,
+                    "PermissionsFIT",
+                    "checkNotificationsPermission"
+                );
                 break;
 
             default:
@@ -247,61 +273,69 @@ PermissionsOutSystems.prototype.checkPermissions = function (successCallBack, fa
 
 PermissionsOutSystems.prototype.requestPermissions = function (successCallBack, failureCallBack, permissions) {
     var notAuthorized = new Array();
-    var currentPermission = "";
     var currentIndex = 0;
 
-    function permissionSuccess(res) {
+    function permissionSuccess(res, item) {
         if ((res.hasOwnProperty("hasPermission") && res.hasPermission != true) || res == "false") {
-            notAuthorized.push(currentPermission);
+            notAuthorized.push(item);
         }
 
-        if (currentIndex == permissions.length - 1) {
+        currentIndex += 1;
+        if (currentIndex == permissions.length) {
             successCallBack(notAuthorized);
         }
     }
 
     function permissionFailure(res) {
-        notAuthorized.push(currentPermission);
+        //notAuthorized.push(currentPermission);
 
         if (currentIndex == permissions.length - 1) {
-            successCallBack(notAuthorized);
+            //successCallBack(notAuthorized);
         }
     }
 
-    permissions.forEach(function (item, index) {
-        currentPermission = item;
-
+    permissions.forEach(function (item) {
         switch (item) {
-            case batteryOptimizationPermission:
-                permissionSuccess("true");
+            case this.PermissionsOutSystems.batteryOptimizationPermission:
+                permissionSuccess("true", this.PermissionsOutSystems.batteryOptimizationPermission);
                 break;
 
-            case gpsDeviceIsOn:
-                permissionSuccess("true");
+            case this.PermissionsOutSystems.gpsDeviceIsOn:
+                permissionSuccess("true", this.PermissionsOutSystems.gpsDeviceIsOn);
                 break;
 
-            case fitnessPermission:
-                cordova.plugins.permissions.requestPermission(this.BODY_SENSORS, permissionSuccess, permissionFailure);
+            case this.PermissionsOutSystems.fitnessPermission:
+                cordova.plugins.permissions.requestPermission(
+                    this.BODY_SENSORS,
+                    function (res) {
+                        permissionSuccess(res, item);
+                    },
+                    permissionFailure
+                );
                 break;
 
-            case foregroundGPSPermission:
+            case this.PermissionsOutSystems.foregroundGPSPermission:
                 cordova.plugins.permissions.requestPermission(
                     this.ACCESS_FINE_LOCATION,
-                    permissionSuccess,
+                    function (res) {
+                        permissionSuccess(res, item);
+                    },
                     permissionFailure
                 );
                 break;
 
-            case backgroundGPSPermission:
+            case this.PermissionsOutSystems.backgroundGPSPermission:
                 cordova.plugins.permissions.requestPermission(
                     this.ACCESS_BACKGROUND_LOCATION,
-                    permissionSuccess,
+                    function (res) {
+                        permissionSuccess(res, item);
+                    },
                     permissionFailure
                 );
                 break;
 
-            case notificationsPermission:
-                permissionSuccess("true");
+            case this.PermissionsOutSystems.notificationsPermission:
+                permissionSuccess("true", this.PermissionsOutSystems.notificationsPermission);
                 break;
 
             default:
