@@ -171,21 +171,150 @@ var PermissionsOutSystems = function Permissions() {
 
     this.GENERALLOCATION = 0;
     this.BACKGROUNDLOCATION = 1;
+
+    this.batteryOptimizationPermission = "BatteryOptimization";
+    this.gpsDeviceIsOn = "GPSDeviceIsOn";
+    this.fitnessPermission = "FitnessPermission";
+    this.notificationsPermission = "NotificationsPermission";
+    this.foregroundGPSPermission = "ForegroundGPSPermission";
+    this.backgroundGPSPermission = "BackgroundGPSPermission";
 };
 
-// PermissionsOutSystems.prototype.checkPermission = function (successCallBack, failureCallBack, permission) {
-//     cordova.plugins.permissions.checkPermission(permission, successCallBack, failureCallBack);
-// };
+PermissionsOutSystems.prototype.checkPermissions = function (successCallBack, failureCallBack, permissions) {
+    var notAuthorized = new Array();
+    var currentPermission = "";
+    var currentIndex = 0;
 
-// PermissionsOutSystems.prototype.requestPermission = function (successCallBack, failureCallBack, permission) {
-//     cordova.plugins.permissions.requestPermission(permission, successCallBack, failureCallBack);
-// };
+    function permissionSuccess(res) {
+        if ((res.hasOwnProperty("hasPermission") && res.hasPermission != true) || res == "false") {
+            notAuthorized.push(currentPermission);
+        }
+
+        if (currentIndex == permissions.length - 1) {
+            successCallBack(notAuthorized);
+        }
+    }
+
+    function permissionFailure(res) {
+        notAuthorized.push(currentPermission);
+
+        if (currentIndex == permissions.length - 1) {
+            successCallBack(notAuthorized);
+        }
+    }
+
+    permissions.forEach(function (item, index) {
+        currentPermission = item;
+
+        switch (item) {
+            case batteryOptimizationPermission:
+                exec(permissionSuccess, permissionFailure, "PermissionsFIT", "checkBatteryOptimization");
+                break;
+
+            case gpsDeviceIsOn:
+                exec(permissionSuccess, permissionFailure, "PermissionsFIT", "checkGPSDeviceIsOn");
+                break;
+
+            case fitnessPermission:
+                cordova.plugins.permissions.checkPermission(this.BODY_SENSORS, permissionSuccess, permissionFailure);
+                break;
+
+            case foregroundGPSPermission:
+                cordova.plugins.permissions.checkPermission(
+                    this.ACCESS_FINE_LOCATION,
+                    permissionSuccess,
+                    permissionFailure
+                );
+                break;
+
+            case backgroundGPSPermission:
+                cordova.plugins.permissions.checkPermission(
+                    this.ACCESS_BACKGROUND_LOCATION,
+                    permissionSuccess,
+                    permissionFailure
+                );
+                break;
+
+            case notificationsPermission:
+                exec(permissionSuccess, permissionFailure, "PermissionsFIT", "checkNotificationsPermission");
+                break;
+
+            default:
+                failureCallBack("Found unknown permission '" + item + "'");
+        }
+    });
+};
+
+PermissionsOutSystems.prototype.requestPermissions = function (successCallBack, failureCallBack, permissions) {
+    var notAuthorized = new Array();
+    var currentPermission = "";
+    var currentIndex = 0;
+
+    function permissionSuccess(res) {
+        if ((res.hasOwnProperty("hasPermission") && res.hasPermission != true) || res == "false") {
+            notAuthorized.push(currentPermission);
+        }
+
+        if (currentIndex == permissions.length - 1) {
+            successCallBack(notAuthorized);
+        }
+    }
+
+    function permissionFailure(res) {
+        notAuthorized.push(currentPermission);
+
+        if (currentIndex == permissions.length - 1) {
+            successCallBack(notAuthorized);
+        }
+    }
+
+    permissions.forEach(function (item, index) {
+        currentPermission = item;
+
+        switch (item) {
+            case batteryOptimizationPermission:
+                permissionSuccess("true");
+                break;
+
+            case gpsDeviceIsOn:
+                permissionSuccess("true");
+                break;
+
+            case fitnessPermission:
+                cordova.plugins.permissions.requestPermission(this.BODY_SENSORS, permissionSuccess, permissionFailure);
+                break;
+
+            case foregroundGPSPermission:
+                cordova.plugins.permissions.requestPermission(
+                    this.ACCESS_FINE_LOCATION,
+                    permissionSuccess,
+                    permissionFailure
+                );
+                break;
+
+            case backgroundGPSPermission:
+                cordova.plugins.permissions.requestPermission(
+                    this.ACCESS_BACKGROUND_LOCATION,
+                    permissionSuccess,
+                    permissionFailure
+                );
+                break;
+
+            case notificationsPermission:
+                permissionSuccess("true");
+                break;
+
+            default:
+                failureCallBack("Found unknown permission '" + item + "'");
+        }
+    });
+};
 
 PermissionsOutSystems.prototype.checkBatteryOptimization = function (successCallBack, failureCallBack) {
     exec(successCallBack, failureCallBack, "PermissionsFIT", "checkBatteryOptimization");
 };
 
-PermissionsOutSystems.prototype.checkGPSDeviceIsOn = function (successCallback, failureCallback) {
+PermissionsOutSystems.prototype.checkGPSDeviceIsOn = function (successCallBack, failureCallBack) {
     exec(successCallBack, failureCallBack, "PermissionsFIT", "checkGPSDeviceIsOn");
 };
 
