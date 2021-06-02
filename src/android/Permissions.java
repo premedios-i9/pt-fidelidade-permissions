@@ -57,10 +57,12 @@ public class Permissions extends CordovaPlugin {
                     permissionsCallbackContext.sendPluginResult(pluginResult);
                 }
             });
+            return true;
         } else if (ACTION_CHECK_NOTIFICATIONS.equals(action)) {
             Boolean notificationsEnabled = NotificationManagerCompat.from(cordova.getContext())
                     .areNotificationsEnabled();
             permissionsCallbackContext.success(notificationsEnabled ? "true" : "false");
+            return true;
         }
 
         return false;
